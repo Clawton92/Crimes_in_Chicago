@@ -14,26 +14,9 @@ from sklearn.metrics import roc_curve, auc
 from sklearn.linear_model import LassoCV
 from sklearn.datasets import make_regression
 
-#test data frame with 5 features and 1000 rows (500 arrested, 500 non arrests)
-test_set = pd.read_csv('data_sets/crimes-in-chicago/test_set.csv')
-df_shuffle = test_set.sample(frac=1).reset_index(drop=True)
-y_initial = df_shuffle['arrest'].values
-x_initial = df_shuffle[['domestic', 'loc_north', 'loc_south', 'crime_non_violent', 'crime_violent']].values
-
-#2nd test data set with full dummy variables for wards and crimes types, this also included domestic
-#2000 rows, 1000 arrested and 1000 non arrested. This dataframe is already shuffled
-df_dummies_test = pd.read_csv('data_sets/crimes-in-chicago/full_dummies_set.csv')
-df_dummies_test.drop('Unnamed: 0', axis=1, inplace=True)
-
-y_dummies = df_dummies_test['arrest'].values
-X_dummies = df_dummies_test.drop('arrest', axis=1).values
-df_X_dummies = df_dummies_test.drop('arrest', axis=1)
-
-#reading in final set to train
-df_final_full = pd.read_csv('data_sets/crimes-in-chicago/final_set_to_train.csv')
 
 def pd_concat_sampled_df(df, col, val1, val2, sample_size):
-    query_string1 = "{} == {}".format(col, val1)
+    query_string1 = "{} == {}".format (col, val1)
     query_string2 = "{} == {}".format(col, val2)
     first = df.query(query_string1)
     second = df.query(query_string2)
@@ -53,7 +36,7 @@ def logit_kfold(X, y, folds):
     recalls = []
 
     for train_index, test_index in kf.split(X):
-        model = LogisticRegression()
+        model = LogisticRegressionCV(cv=10)
         model.fit(X[train_index], y[train_index])
         y_predict = model.predict(X[test_index])
         y_true = y[test_index]
@@ -65,7 +48,7 @@ def logit_kfold(X, y, folds):
     return kf_scores
 
 def roc_c(x_vals, y_vals, feature_title, save_title):
-    X_train, X_test, y_train, y_test = train_test_split(x_vals, y_vals)
+    X_train, X_test, y_train, y_test = train_test_split(x_vals, y_vals, stratify=y_vals)
     model = LogisticRegressionCV(cv=10)
     model.fit(X_train, y_train)
     probabilities = model.predict_proba(X_test)[:, 1]
@@ -81,7 +64,7 @@ def roc_c(x_vals, y_vals, feature_title, save_title):
     plt.show()
 
 def lasso_cv(x_vals, y_vals):
-    X_train, X_test, y_train, y_test = train_test_split(x_vals, y_vals)
+    X_train, X_test, y_train, y_test = train_test_split(x_vals, y_vals, stratify=y_vals)
     model = LogisticRegression(penalty='l1').fit(X_train, y_train)
     return model
 
@@ -104,46 +87,54 @@ def vif(X):
 
 
 if __name__=='__main__':
-    #kfold for initial 5 feature model
-    kf_5feat = logit_kfold(x_initial, y_initial, 10)
+    #reading in new data sets after mistake
+    five_feat_balanced = pd.read_csv('data_sets/five_feat_balanced.csv')
+    five_feat_balanced.drop('Unnamed: 0', axis=1, inplace=True)
+    five_feat_balanced.sort_values('arrest', inplace=True)
+    five_short_head = five_feat_balanced.iloc[0:1000]
+    five_short_tail = five_feat_balanced.iloc[five_feat_balanced.shape[0]-1000:five_feat_balanced.shape[0]]
+    five_feat_short = pd.concat([five_short_head, five_short_tail])
+    five_feat_short = five_feat_short.sample(frac=1).reset_index(drop=True)
 
-    #roc curve for initial 5 feature dataframe
-    # roc_c(x_initial, y_initial, 'test set with 5 features', 'roc_test_5_features')
+    full_feat_balanced = pd.read_csv('data_sets/full_feat_balanced.csv')
+    full_feat_balanced.drop('Unnamed: 0', axis=1)
+    full_feat_balanced.sort_values('arrest', inplace=True)
+    full_short_head = full_feat_balanced.iloc[0:1000]
+    full_short_tail = full_feat_balanced.iloc[full_feat_balanced.shape[0]-1000:full_feat_balanced.shape[0]]
+    full_feat_short = pd.concat([full_short_head, full_short_tail])
+    full_feat_short = full_feat_short.sample(frac=1).reset_index(drop=True)
+    full_feat_short.drop('Unnamed: 0', axis=1, inplace=True)
+    full_feat_long = full_feat_balanced[1000:full_feat_balanced.shape[0]-1000]
 
-    #creating lasso with l1 penalty and finding zero coeffs to drop and writing to csv
-    # lasso_log = lasso_cv(X_dummies, y_dummies)
-    # #writing coeffs to dataframe
+    '''new data starts here'''
+    #roc for 5 feature test set
+    roc_c(five_feat_short.drop('arrest', axis=1).values, five_feat_short['arrest'].values, 'retest 5 feat', 'testing')
+
+    #roc for full feature test set
+    roc_c(full_feat_short.drop('arrest', axis=1).values, full_feat_short['arrest'].values, 'retest full feat', 'testing full')
+    ##lasso on test data. Saving coeffs to csv for presentation
+    # lasso_log = lasso_cv(full_feat_short.drop('arrest', axis=1).values, full_feat_short['arrest'].values)
     # ls = [lasso_log.coef_[0][idx] for idx in range(lasso_log.coef_.shape[1])]
     # df_coeffs = pd.DataFrame({'coeffs': ls})
     # df_coeffs.to_csv('data_sets/df_coeffs.csv')
     #
-    # #X_val Dataframe for dummies test model
-    # columns_to_remove = remove_cols(df_X_dummies.columns, lasso_log.coef_)
-    # df_reduced_dummies = df_X_dummies.drop(columns_to_remove, axis=1)
-    # df_reduced_dummies.to_csv('data_sets/df_reduced_dummies.csv')
-
-    #reading in reduced dummiers df
-    df_reduced_dummies = pd.read_csv('data_sets/df_reduced_dummies.csv')
-    # # vif(df_reduced_dummies)
+    # #removing columns for new data sets with fixed features
+    # columns_to_remove = remove_cols(full_feat_short.drop('arrest', axis=1).columns, lasso_log.coef_)
+    # full_feat_short_final = full_feat_short.drop(columns_to_remove, axis=1)
+    # full_feat_short_final.to_csv('data_sets/full_feat_short_final.csv')
     #
-    # # #kfold for initial 28 feature model
-    # # kf_28feat_initial = logit_kfold(df_X_dummies.values, y_dummies, 10)
+    # full_feat_long_final = full_feat_long.drop(columns_to_remove, axis=1)
+    # full_feat_long_final.to_csv('data_sets/full_feat_long_final.csv')
 
-    #roc curve for initial reduced feature dataframe
-    roc_c(df_reduced_dummies.values, y_dummies, 'test set with new features', 'test_set_28_features')
+    #reading in final csvs
+    full_short_final = pd.read_csv('data_sets/full_feat_short_final.csv')
+    full_short_final.drop('Unnamed: 0', axis=1, inplace=True)
+    #vif for new dataframe after lasso elimination
+    vif(full_short_final.drop('arrest', axis=1))
+    roc_c(full_short_final.drop('arrest', axis=1).values, full_short_final['arrest'].values, 'full short final!', 'testing full')
+    logit_kfold(X, y, folds)
 
-    # #creating undersampled and reduced full dataframe for years 2012-2017
-    # df_final_balanced_classes = pd_concat_sampled_df(df_final_full, 'arrest', 1, 0, df_final_full.query('arrest == 1').shape[0])
-    # df_final_balanced_classes.drop('Unnamed: 0', axis=1, inplace=True)
-    # final_cols_to_drop = remove_cols(df_final_balanced_classes.drop('arrest', axis=1).columns, lasso_log.coef_)
-    # df_final_balanced_reduced = df_final_balanced_classes.drop(final_cols_to_drop, axis=1)
-    # df_final_balanced_reduced.to_csv('data_sets/df_final_balance_reduced.csv')
-
-    # read in final reduced df
-    df_final_balanced_reduced = pd.read_csv('data_sets/df_final_balance_reduced.csv')
-    # #kfold for final 28 feature model
-    # kf_28feat_final = logit_kfold(df_final_balanced_reduced.drop('arrest', axis=1).values, df_final_balanced_reduced['arrest'].values, 10)
-
-    #roc curve for final set
-    roc_c(df_final_balanced_reduced.drop('arrest', axis=1).values, df_final_balanced_reduced['arrest'].values, 'full set with new features', 'roc_full_set_28_features')
-    #
+    full_long_final = pd.read_csv('data_sets/full_feat_long_final.csv')
+    full_long_final.drop(['Unnamed: 0', 'Unnamed: 0.1'], axis=1, inplace=True)
+    roc_c(full_long_final.drop('arrest', axis=1).values, full_long_final['arrest'].values, 'full long final!', 'testing full')
+    logit_kfold(X, y, folds)
