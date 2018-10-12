@@ -84,33 +84,33 @@ Feature index|
 
 I then checked for multicollinearity issues with VIF values after the prior features were discarded.
 
-|VIF values|
-|---|
-|domestic| 1.69|
-|assault| 1.09|
-|battery| 1.7|
-|burglary| 1.06|
-|crim_sexual_assault| 1.0|
-|criminal_damage| 1.12|
-|criminal_trespass| 1.06|
-|deceptive_practice| 1.04|
-|gambling| 1.0|
-|interference_with_public_officer| 1.0|
-|liquor_law_violation| 1.0|
-|motor_vehicle_theft| 1.06|
-|narcotics| 1.07|
-|other_offense| 1.13|
-|prostitution| 1.0|
-|public_peace_violation| 1.01|
-|robbery| 1.02|
-|theft| 1.19|
-|weapons_violation| 1.02|
-|ward_1| 1.08|
-|ward_2| 1.1|
-|ward_3| 1.19|
-|ward_4| 1.15|
-|ward_7| 1.14|
-|ward_10| 1.25|
+VIF values|
+---|---
+domestic| 1.69
+assault| 1.09
+battery| 1.7
+burglary| 1.06
+crim_sexual_assault| 1.0
+criminal_damage| 1.12
+criminal_trespass| 1.06
+deceptive_practice| 1.04
+gambling| 1.0
+interference_with_public_officer| 1.0
+liquor_law_violation| 1.0
+motor_vehicle_theft| 1.06
+narcotics| 1.07
+other_offense| 1.13
+prostitution| 1.0
+public_peace_violation| 1.01
+robbery| 1.02
+theft| 1.19
+weapons_violation| 1.02
+ward_1| 1.08
+ward_2| 1.1
+ward_3| 1.19
+ward_4| 1.15
+ward_7| 1.14
+ward_10| 1.25
 
 
 Plot 3:
