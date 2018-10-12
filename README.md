@@ -31,7 +31,7 @@ Note that because I am hoping to predict arrests, these classes are imbalanced.
 
 ![](EDA_graphs/type_eda.png)
 
-![](EDA_graphs/ward_eda.png)
+![](EDA_graphs/ward_graph_2.png)
 
 ## Model
 I approached this question by first creating a small test set so computing time wasn't too long and choosing a location type (ward), all primary crime types, and the variable 'Domestic', which noted if the crime was a domestic situation. I first explored by grouping primary crime types into two groups, violent and nonviolent. I then grouped the 50 wards into 2 groups of 25, north and south Chicago. Domestic stayed as is since it was a true/false (1/0) value. Each of these grouping were broken up into dummy variables with 0/1 values to give a total of 5 features. I then created a logistic regression model and plotted it's ROC curve to visualize the true positive and False positive rates.
@@ -60,57 +60,57 @@ I opened up the features I used previously and expanded each crime to into its o
 
 From here I made a logistic regression model with an L1 penalty to identify coefficients that don't have a large predictive impact on my model. The features corresponding to the zeroed out coefficients were discarded. Some of these coefficients represented a very small amount of the total number of crimes. Note that 4 locations were discarded.
 
-|Feature index|
-|---|
-|2| Arson|
-|6| Concealed carry violation|
-|12| Homicde|
-|13| Human trafficking|
-|15| Intimidation|
-|16| Kidnapping|
-|20| Non-criminal|
-|21| Non_criminal|
-|22| Non-criminal(subject-specified)|
-|23| Obscenity|
-|24| Offense involving children|
-|25| Other narcotic violation|
-|28| Public Indecency|
-|31| Sex offenses|
-|32| Stalking|
-|39| Ward 4|
-|40| Ward 5|
-|42| Ward 7|
-|43| Ward 8|
+Feature index|
+---|---
+2| Arson
+6| Concealed carry violation
+12| Homicde
+13| Human trafficking
+15| Intimidation
+16| Kidnapping
+20| Non-criminal
+21| Non_criminal
+22| Non-criminal(subject-specified)
+23| Obscenity
+24| Offense involving children
+25| Other narcotic violation
+28| Public Indecency
+31| Sex offenses
+32| Stalking
+39| Ward 4
+40| Ward 5
+42| Ward 7
+43| Ward 8
 
 I then checked for multicollinearity issues with VIF values after the prior features were discarded.
 
 |VIF values|
-|---|---|
-|domestic| 1.69| .|
-|assault| 1.09| .|
-|battery| 1.7| .|
-|burglary| 1.06| .|
-|crim_sexual_assault| 1.0| .|
-|criminal_damage| 1.12| .|
-|criminal_trespass| 1.06| .|
-|deceptive_practice| 1.04| .|
-|gambling| 1.0| .|
-|interference_with_public_officer| 1.0| .|
-|liquor_law_violation| 1.0| .|
-|motor_vehicle_theft| 1.06| .|
-|narcotics| 1.07| .|
-|other_offense| 1.13| .|
-|prostitution| 1.0| .|
-|public_peace_violation| 1.01| .|
-|robbery| 1.02| .|
-|theft| 1.19| .|
-|weapons_violation| 1.02| .|
-|ward_1| 1.08| .|
-|ward_2| 1.1| .|
-|ward_3| 1.19| .|
-|ward_4| 1.15| .|
-|ward_7| 1.14| .|
-|ward_10| 1.25| .|
+|---|
+|domestic| 1.69|
+|assault| 1.09|
+|battery| 1.7|
+|burglary| 1.06|
+|crim_sexual_assault| 1.0|
+|criminal_damage| 1.12|
+|criminal_trespass| 1.06|
+|deceptive_practice| 1.04|
+|gambling| 1.0|
+|interference_with_public_officer| 1.0|
+|liquor_law_violation| 1.0|
+|motor_vehicle_theft| 1.06|
+|narcotics| 1.07|
+|other_offense| 1.13|
+|prostitution| 1.0|
+|public_peace_violation| 1.01|
+|robbery| 1.02|
+|theft| 1.19|
+|weapons_violation| 1.02|
+|ward_1| 1.08|
+|ward_2| 1.1|
+|ward_3| 1.19|
+|ward_4| 1.15|
+|ward_7| 1.14|
+|ward_10| 1.25|
 
 
 Plot 3:
