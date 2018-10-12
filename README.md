@@ -31,7 +31,7 @@ Note that because I am hoping to predict arrests, these classes are imbalanced.
 
 ![](EDA_graphs/type_eda.png)
 
-![](EDA_graphs/ward_graph_2.png)
+![](EDA_graphs/ward_eda.png)
 
 
 ## Model
