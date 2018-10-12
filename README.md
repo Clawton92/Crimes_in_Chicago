@@ -61,7 +61,7 @@ I opened up the features I used previously and expanded each crime to into its o
 From here I made a logistic regression model with an L1 penalty to identify coefficients that don't have a large predictive impact on my model. The features corresponding to the zeroed out coefficients were discarded. Some of these coefficients represented a very small amount of the total number of crimes. Note that 4 locations were discarded.
 
 |Feature index|
-|---|---|
+|---|:---|
 |2| Arson|
 |6| Concealed carry violation|
 |12| Homicde|
@@ -85,7 +85,7 @@ From here I made a logistic regression model with an L1 penalty to identify coef
 I then checked for multicollinearity issues with VIF values after the prior features were discarded.
 
 |VIF values|
-|---|---|
+|---|:---|
 |domestic| 1.69|
 |assault| 1.09|
 |battery| 1.7|
