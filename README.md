@@ -85,7 +85,7 @@ From here I made a logistic regression model with an L1 penalty to identify coef
 I then checked for multicollinearity issues with VIF values after the prior features were discarded.
 
 |VIF values|
-|---|--|
+|---|---|
 |domestic| 1.69| .|
 |assault| 1.09| .|
 |battery| 1.7| .|
