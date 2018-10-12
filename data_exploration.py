@@ -169,24 +169,9 @@ def pd_concat_sampled_df(df, col, val1, val2, sample_size):
     final_shuffle = final.sample(frac=1).reset_index(drop=True)
     return final
 
-first = df_test.query('arrest == 1')
-second = df_test.query('arrest == 0')
-samp1 = first.sample(1000)
-samp2 = second.sample(1000)
-samp1.index = range(1000)
-samp2.index = range(1000, 2000)
-frames = [samp1, samp2]
-final_test = pd.concat(frames)
+if __name__=='__main__':
+    five_feat_balanced = pd_concat_sampled_df(df_test, 'arrest', 1, 0, df_test.query('arrest == 1').shape[0])
+    five_feat_balanced.to_csv('data_sets/five_feat_balanced.csv')
 
-
-# if __name__=='__main__':
-#     #EDA
-#
-#     final_test.to_csv('data_sets/crimes-in-chicago/test_set.csv')
-#
-#     #creating new test dataset with full dummies for ward and type and writing to csv
-#     df_full_dummies_test = pd_concat_sampled_df(df_full_dummies_set, 'arrest', 1, 0, 1000)
-#     df_full_dummies_test.to_csv('data_sets/crimes-in-chicago/full_dummies_set.csv')
-#
-#     #outputing full set to train in chi_test_set.py
-#     df_full_dummies_set.to_csv('data_sets/crimes-in-chicago/final_set_to_train.csv')
+    full_feat_balanced = pd_concat_sampled_df(df_full_dummies_set, 'arrest', 1, 0, df_full_dummies_set.query('arrest == 1').shape[0])
+    full_feat_balanced.to_csv('data_sets/full_feat_balanced.csv')

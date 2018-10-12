@@ -14,6 +14,16 @@ from sklearn.metrics import roc_curve, auc
 from sklearn.linear_model import LassoCV
 from sklearn.datasets import make_regression
 
+plt.rcParams.update({
+    'font.size'           : 20.0,
+    'axes.titlesize'      : 'large',
+    'axes.labelsize'      : 'medium',
+    'xtick.labelsize'     : 'medium',
+    'ytick.labelsize'     : 'medium',
+    'legend.fontsize'     : 'large',
+})
+
+plt.rcParams['figure.figsize'] = (12,9)
 
 def pd_concat_sampled_df(df, col, val1, val2, sample_size):
     query_string1 = "{} == {}".format (col, val1)
@@ -29,25 +39,27 @@ def pd_concat_sampled_df(df, col, val1, val2, sample_size):
     final_shuffle = final.sample(frac=1).reset_index(drop=True)
     return final_shuffle
 
-def logit_kfold(X, y, folds):
-    kf = KFold(folds, shuffle=True)
-    accuracies = []
-    precisions = []
-    recalls = []
+# def logit_kfold(X, y, folds):
+#     kf = KFold(folds, shuffle=True)
+#     accuracies = []
+#     precisions = []
+#     recalls = []
+#
+#     for train_index, test_index in kf.split(X):
+#         model = LogisticRegressionCV(cv=10)
+#         model.fit(X[train_index], y[train_index])
+#         y_predict = model.predict(X[test_index])
+#         y_true = y[test_index]
+#         accuracies.append(accuracy_score(y_true, y_predict))
+#         precisions.append(precision_score(y_true, y_predict))
+#         recalls.append(recall_score(y_true, y_predict))
+#     kf_scores = ("accuracy: {}".format(np.average(accuracies)), "precision: {}".format(np.average(precisions)),\
+#         "recall: {}".format(np.average(recalls)))
+#     return kf_scores
 
-    for train_index, test_index in kf.split(X):
-        model = LogisticRegressionCV(cv=10)
-        model.fit(X[train_index], y[train_index])
-        y_predict = model.predict(X[test_index])
-        y_true = y[test_index]
-        accuracies.append(accuracy_score(y_true, y_predict))
-        precisions.append(precision_score(y_true, y_predict))
-        recalls.append(recall_score(y_true, y_predict))
-    kf_scores = ("accuracy: {}".format(np.average(accuracies)), "precision: {}".format(np.average(precisions)),\
-        "recall: {}".format(np.average(recalls)))
-    return kf_scores
 
-def roc_c(x_vals, y_vals, feature_title, save_title):
+
+def roc_c_initial(x_vals, y_vals, feature_title, save_title):
     X_train, X_test, y_train, y_test = train_test_split(x_vals, y_vals, stratify=y_vals)
     model = LogisticRegressionCV(cv=10)
     model.fit(X_train, y_train)
@@ -60,8 +72,37 @@ def roc_c(x_vals, y_vals, feature_title, save_title):
     plt.xlabel("False Positive Rate")
     plt.ylabel("True Positive Rate")
     plt.title("ROC plot of arrests in Chicago: {}".format(feature_title))
-    # plt.savefig('graphs/{}'.format(save_title))
-    plt.show()
+    plt.savefig('graphs/{}'.format(save_title))
+    # plt.show()
+    y_predict = model.predict(X_test)
+    accuracy = accuracy_score(y_test, y_predict)
+    precision = precision_score(y_test, y_predict)
+    recall = recall_score(y_test, y_predict)
+    scores = '{}, accuracy: {}, precision: {}, recall: {}'.format(feature_title, accuracy, precision, recall)
+    print(scores)
+
+    return model
+
+def roc_c_final(model, x_vals, y_vals, feature_title, save_title):
+    probabilities = model.predict_proba(x_vals)[:, 1]
+    fpr, tpr, thresholds = roc_curve(y_vals, probabilities)
+    roc_auc = round(auc(fpr, tpr), 2)
+    plt.plot(fpr, tpr, color='darkorange')
+    plt.plot([0, 1], [0, 1], color='navy', linestyle='--')
+    plt.text(0.8, 0.0, 'auc = {}'.format(roc_auc))
+    plt.xlabel("False Positive Rate")
+    plt.ylabel("True Positive Rate")
+    plt.title("ROC plot of arrests in Chicago: {}".format(feature_title))
+    plt.savefig('graphs/{}'.format(save_title))
+    # plt.show()
+    y_predict = model.predict(x_vals)
+    accuracy = accuracy_score(y_vals, y_predict)
+    precision = precision_score(y_vals, y_predict)
+    recall = recall_score(y_vals, y_predict)
+    scores = '{}, accuracy: {}, precision: {}, recall: {}'.format(feature_title, accuracy, precision, recall)
+    print(scores)
+
+
 
 def lasso_cv(x_vals, y_vals):
     X_train, X_test, y_train, y_test = train_test_split(x_vals, y_vals, stratify=y_vals)
@@ -108,10 +149,10 @@ if __name__=='__main__':
 
     '''new data starts here'''
     #roc for 5 feature test set
-    roc_c(five_feat_short.drop('arrest', axis=1).values, five_feat_short['arrest'].values, 'retest 5 feat', 'testing')
+    # model5 = roc_c_initial(five_feat_short.drop('arrest', axis=1).values, five_feat_short['arrest'].values, '5 feature test set', '5_feature_test_set')
 
     #roc for full feature test set
-    roc_c(full_feat_short.drop('arrest', axis=1).values, full_feat_short['arrest'].values, 'retest full feat', 'testing full')
+    # model44 = roc_c_initial(full_feat_short.drop('arrest', axis=1).values, full_feat_short['arrest'].values, 'full feature test set', 'full_feature_test_set')
     ##lasso on test data. Saving coeffs to csv for presentation
     # lasso_log = lasso_cv(full_feat_short.drop('arrest', axis=1).values, full_feat_short['arrest'].values)
     # ls = [lasso_log.coef_[0][idx] for idx in range(lasso_log.coef_.shape[1])]
@@ -129,12 +170,11 @@ if __name__=='__main__':
     #reading in final csvs
     full_short_final = pd.read_csv('data_sets/full_feat_short_final.csv')
     full_short_final.drop('Unnamed: 0', axis=1, inplace=True)
-    #vif for new dataframe after lasso elimination
-    vif(full_short_final.drop('arrest', axis=1))
-    roc_c(full_short_final.drop('arrest', axis=1).values, full_short_final['arrest'].values, 'full short final!', 'testing full')
-    logit_kfold(X, y, folds)
-
+    # #vif for new dataframe after lasso elimination
+    # vif(full_short_final.drop('arrest', axis=1))
+    # model44_final = roc_c_initial(full_short_final.drop('arrest', axis=1).values, full_short_final['arrest'].values, 'full feature final test set', 'full_feature_final_test_set')
+    # # #
+    # # #
     full_long_final = pd.read_csv('data_sets/full_feat_long_final.csv')
     full_long_final.drop(['Unnamed: 0', 'Unnamed: 0.1'], axis=1, inplace=True)
-    roc_c(full_long_final.drop('arrest', axis=1).values, full_long_final['arrest'].values, 'full long final!', 'testing full')
-    logit_kfold(X, y, folds)
+    # roc_c_final(model44_final, full_long_final.drop('arrest', axis=1).values, full_long_final['arrest'].values, 'full feature final set', 'full_feature_final_set')

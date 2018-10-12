@@ -35,8 +35,8 @@ Block: 32774 unique items
 #removing all rows with any null value. District: 1, Ward: 14, Community Area: 40
 dfdropna = dfshort.dropna()
 dropped_rows_total = dfshort.shape[0] - dfdropna.shape[0]
-
-#EDA
+#
+# #EDA
 df_EDA_ward = dfdropna[['arrest', 'ward']]
 df_ward_dummies = pd.get_dummies(df_EDA_ward['arrest'], prefix='arrest')
 df_plot_ward = df_EDA_ward.join(df_ward_dummies)
@@ -44,8 +44,8 @@ df_plot_ward.drop('arrest', axis=1, inplace=True)
 df_plot_count_ward = df_plot_ward.groupby('ward').agg({'arrest_False': 'sum', 'arrest_True': 'sum'})
 df_plot_count_ward.reset_index(inplace=True)
 df_plot_ward_short = df_plot_count_ward.iloc[0:10]
-df_plot_ward_short.plot(x="ward", y=["arrest_False", "arrest_True"], kind="bar", rot=0)
-plt.show()
+df_plot_ward_short.plot(x="ward", y=["arrest_False", "arrest_True"], kind="bar", title='Arrests and non-arrests per ward', rot=0)
+plt.savefig('EDA_graphs/ward_eda.png')
 
 df_EDA_type = dfdropna[['primary_type']]
 df_type_arr = df_EDA_type.join(df_ward_dummies)
@@ -55,14 +55,16 @@ df_plot_count_type.reset_index(inplace=True)
 #  'DECEPTIVE PRACTICE', 'CRIMINAL TRESPASS', 'CRIMINAL DAMAGE', 'MOTOR VEHICLE THEFT'])]
 df_plot_type_short = df_plot_count_type.loc[df_plot_count_type['primary_type'].isin(['ARSON', 'ASSAULT', 'STALKING', 'ROBBERY',\
 'PROSTITUTION', 'HOMICIDE', 'CRIMINAL DAMAGE'])]
-df_plot_type_short.plot(x='primary_type', y=["arrest_False", "arrest_True"], kind="bar", rot=0)
-plt.show()
+df_plot_type_short.plot(x='primary_type', y=["arrest_False", "arrest_True"], kind="bar", title='Arrests and non-arrests for crime type', figsize=(10,7), rot=0)
+plt.savefig('EDA_graphs/type_eda.png')
 
-#total arrests/non arrests
-objects = ('Arrests', 'Non-arrests', 'Total_incidences')
-y_pos = np.arange(len(objects))
-plt.bar(y_pos, [dfdropna['arrest'].sum(), dfdropna['arrest'].count() - dfdropna['arrest'].sum(), dfdropna.shape[0]], align='center', alpha=0.5)
-plt.xticks(y_pos, objects)
-plt.ylabel('Count')
-plt.title('Arrests for reported incedences')
-plt.show()
+df_grouped = dfdropna[['ward', 'primary_type']].reset_index(drop=True)
+
+# total arrests/non arrests
+# objects = ('Arrests', 'Non-arrests', 'Total_incidences')
+# y_pos = np.arange(len(objects))
+# plt.bar(y_pos, [dfdropna['arrest'].sum(), dfdropna['arrest'].count() - dfdropna['arrest'].sum(), dfdropna.shape[0]], align='center', alpha=0.5)
+# plt.xticks(y_pos, objects)
+# plt.ylabel('Count')
+# plt.title('Arrests for reported incedences')
+# plt.savefig('EDA_graphs/arrest_eda.png')
