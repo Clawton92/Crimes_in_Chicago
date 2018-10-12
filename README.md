@@ -37,10 +37,10 @@ Note that because I am hoping to predict arrests, these classes are imbalanced.
 ## Model
 I approached this question by first creating a small test set so computing time wasn't too long and choosing a location type (ward), all primary crime types, and the variable 'Domestic', which noted if the crime was a domestic situation. I first explored by grouping primary crime types into two groups, violent and nonviolent. I then grouped the 50 wards into 2 groups of 25, north and south Chicago. Domestic stayed as is since it was a true/false (1/0) value. Each of these grouping were broken up into dummy variables with 0/1 values to give a total of 5 features. I then created a logistic regression model and plotted it's ROC curve to visualize the true positive and False positive rates.
 
-![](graphs/5_feature_test_set.png)
+![](graphs/5_feature_test_set.png)  
 
-|score|
----|---
+|score| |
+|---|---
 |accuracy | 0.70
 
 
@@ -50,14 +50,14 @@ I opened up the features I used previously and expanded each crime to into its o
 
 ![](graphs/full_feature_test_set.png)
 
-score|
+|score| |
 ---|---
-accuracy | 0.756
+|accuracy | 0.756
 
 
 From here I made a logistic regression model with an L1 penalty to identify coefficients that don't have a large predictive impact on my model. The features corresponding to the zeroed out coefficients were discarded. Some of these coefficients represented a very small amount of the total number of crimes. Note that 4 locations were discarded.
 
-Feature index|
+Feature index| |
 ---|---
 2| Arson
 6| Concealed carry violation
@@ -82,7 +82,7 @@ Feature index|
 
 I then checked for multicollinearity issues with VIF values after the prior features were discarded.
 
-VIF values|
+VIF values| |
 ---|---
 domestic| 1.69
 assault| 1.09
@@ -117,7 +117,7 @@ Made a final model with these identified features on my reduced test set, (2000 
 
 ![](graphs/full_feature_final_test_set.png)
 
-score|
+score| |
 ---|---
 accuracy | 0.752
 
@@ -128,7 +128,7 @@ Applying model to the hold out set, (752912 rows). Here I am treating the remain
 
 ![](graphs/full_feature_final_set.png)
 
-score|
+score| |
 ---|---
 accuracy | 0.751
 
