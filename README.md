@@ -38,13 +38,9 @@ I approached this question by first creating a small test set so computing time 
 
 ![](graphs/5_feature_test_set.png)
 
-score|
+|score|
 ---|---
-accuracy | 0.70
-precision |  0.83
-recall |  0.52
-
-
+|accuracy | 0.70
 
 Plot 2:
 
@@ -55,8 +51,6 @@ I opened up the features I used previously and expanded each crime to into its o
 score|
 ---|---
 accuracy | 0.756
-precision |  0.79
-recall |  0.696
 
 From here I made a logistic regression model with an L1 penalty to identify coefficients that don't have a large predictive impact on my model. The features corresponding to the zeroed out coefficients were discarded. Some of these coefficients represented a very small amount of the total number of crimes. Note that 4 locations were discarded.
 
@@ -122,9 +116,6 @@ Made a final model with these identified features on my reduced test set, (2000 
 score|
 ---|---
 accuracy | 0.752
-precision |  0.802
-recall |  0.668
-
 
 Plot 4:
 
@@ -135,8 +126,6 @@ Applying model to the hold out set, (752912 rows). Here I am treating the remain
 score|
 ---|---
 accuracy | 0.751
-precision | 0.828
-recall |  0.632
 
 ## Discussion
   Two main errors made: 1) incorrect split, fitting, and testing of my balanced input data set. 2) I would like to perform VIF before running a logistic regression with an l1 penalty. I feel following these steps will yield a more generalizable model as multicollinearity will be addressed up front and the training and hold out proportion will be more representative of the full data set.
