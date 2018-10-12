@@ -33,6 +33,7 @@ Note that because I am hoping to predict arrests, these classes are imbalanced.
 
 ![](EDA_graphs/ward_graph_2.png)
 
+
 ## Model
 I approached this question by first creating a small test set so computing time wasn't too long and choosing a location type (ward), all primary crime types, and the variable 'Domestic', which noted if the crime was a domestic situation. I first explored by grouping primary crime types into two groups, violent and nonviolent. I then grouped the 50 wards into 2 groups of 25, north and south Chicago. Domestic stayed as is since it was a true/false (1/0) value. Each of these grouping were broken up into dummy variables with 0/1 values to give a total of 5 features. I then created a logistic regression model and plotted it's ROC curve to visualize the true positive and False positive rates.
 
@@ -41,6 +42,7 @@ I approached this question by first creating a small test set so computing time 
 |score|
 ---|---
 |accuracy | 0.70
+
 
 Plot 2:
 
@@ -51,6 +53,7 @@ I opened up the features I used previously and expanded each crime to into its o
 score|
 ---|---
 accuracy | 0.756
+
 
 From here I made a logistic regression model with an L1 penalty to identify coefficients that don't have a large predictive impact on my model. The features corresponding to the zeroed out coefficients were discarded. Some of these coefficients represented a very small amount of the total number of crimes. Note that 4 locations were discarded.
 
@@ -75,6 +78,7 @@ Feature index|
 40| Ward 5
 42| Ward 7
 43| Ward 8
+
 
 I then checked for multicollinearity issues with VIF values after the prior features were discarded.
 
@@ -117,6 +121,7 @@ score|
 ---|---
 accuracy | 0.752
 
+
 Plot 4:
 
 Applying model to the hold out set, (752912 rows). Here I am treating the remainder of my balanced data set as the hold out set. This should have been smaller, roughly 50% of the original data and the data set to train and form my model with.
@@ -126,6 +131,7 @@ Applying model to the hold out set, (752912 rows). Here I am treating the remain
 score|
 ---|---
 accuracy | 0.751
+
 
 ## Discussion
   Two main errors made: 1) incorrect split, fitting, and testing of my balanced input data set. 2) I would like to perform VIF before running a logistic regression with an l1 penalty. I feel following these steps will yield a more generalizable model as multicollinearity will be addressed up front and the training and hold out proportion will be more representative of the full data set.
